@@ -1,15 +1,26 @@
-import React, {useState} from "react";
+import React, { useEffect, useState } from "react";
 import AppRouter from "components/Router";
-import {authService} from "fBase";
+import { authService, authState } from "fBase";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+  const [init, setInit] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    authState( authService, (user) => {
+      if(user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setInit(true);
+    })
+  }, [])
   return (
     <>
-      <AppRouter isLoggedIn={isLoggedIn} />
-      <footer>&copy; {new Date().getFullYear()} twitter-clone</footer>
+      {init ? <AppRouter isLoggedIn={isLoggedIn} /> : "Initializing..." }
+      <footer>&copy; {new Date().getFullYear()} clone-twitter</footer>
     </>
   );
-} 
+}
 
 export default App;
